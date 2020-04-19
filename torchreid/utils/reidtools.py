@@ -20,16 +20,15 @@ def visualize_ranked_results(
 ):
     """Visualizes ranked results.
 
-    Supports both image-reid and video-reid.
+    Supports both image-reid.
 
-    For image-reid, ranks will be plotted in a single figure. For video-reid, ranks will be
-    saved in folders each containing a tracklet.
+    For image-reid, ranks will be plotted in a single figure.
 
     Args:
         distmat (numpy.ndarray): distance matrix of shape (num_query, num_gallery).
         dataset (tuple): a 2-tuple containing (query, gallery), each of which contains
             tuples of (img_path(s), pid, camid).
-        data_type (str): "image" or "video".
+        data_type (str): "image".
         width (int, optional): resized image width. Default is 128.
         height (int, optional): resized image height. Default is 256.
         save_dir (str): directory to save output images.

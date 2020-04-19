@@ -20,13 +20,13 @@ class DukeMTMCreID(ImageDataset):
         - images:16522 (train) + 2228 (query) + 17661 (gallery).
         - cameras: 8.
     """
-    dataset_dir = 'dukemtmc-reid'
+    dataset_dir = 'DukeMTMC-reID'
     dataset_url = 'http://vision.cs.duke.edu/DukeMTMC/data/misc/DukeMTMC-reID.zip'
 
     def __init__(self, root='', **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
         self.dataset_dir = osp.join(self.root, self.dataset_dir)
-        self.download_dataset(self.dataset_dir, self.dataset_url)
+        print('---dataset_dir:', self.dataset_dir)
         self.train_dir = osp.join(
             self.dataset_dir, 'DukeMTMC-reID/bounding_box_train'
         )
@@ -45,6 +45,7 @@ class DukeMTMCreID(ImageDataset):
         gallery = self.process_dir(self.gallery_dir, relabel=False)
 
         super(DukeMTMCreID, self).__init__(train, query, gallery, **kwargs)
+
 
     def process_dir(self, dir_path, relabel=False):
         img_paths = glob.glob(osp.join(dir_path, '*.jpg'))

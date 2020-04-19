@@ -15,11 +15,10 @@ from torchreid.losses import DeepSupervision
 
 
 class Engine(object):
-    r"""A generic base Engine class for both image- and video-reid.
+    r"""A generic base Engine class for both image--reid.
 
     Args:
-        datamanager (DataManager): an instance of ``torchreid.data.ImageDataManager``
-            or ``torchreid.data.VideoDataManager``.
+        datamanager (DataManager): an instance of ``torchreid.data.ImageDataManager``.
         model (nn.Module): model instance.
         optimizer (Optimizer): an Optimizer.
         scheduler (LRScheduler, optional): if None, no learning rate decay will be performed.
@@ -200,8 +199,7 @@ class Engine(object):
 
         .. note::
 
-            The test pipeline implemented in this function suits both image- and
-            video-reid. In general, a subclass of Engine only needs to re-implement
+            The test pipeline implemented in this function suits both image-reid. In general, a subclass of Engine only needs to re-implement
             ``_extract_features()`` and ``_parse_data_for_eval()`` (most of the time),
             but not a must. Please refer to the source code for more details.
         """

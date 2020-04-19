@@ -15,8 +15,7 @@ class ImageSoftmaxEngine(Engine):
     r"""Softmax-loss engine for image-reid.
 
     Args:
-        datamanager (DataManager): an instance of ``torchreid.data.ImageDataManager``
-            or ``torchreid.data.VideoDataManager``.
+        datamanager (DataManager): an instance of ``torchreid.data.ImageDataManager``.
         model (nn.Module): model instance.
         optimizer (Optimizer): an Optimizer.
         scheduler (LRScheduler, optional): if None, no learning rate decay will be performed.
