@@ -135,6 +135,7 @@ dmypy.json
 # ReID
 reid-data/
 log/
+logs/
 saved-models/
 model-zoo/
 debug*

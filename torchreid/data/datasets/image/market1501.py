@@ -21,9 +21,8 @@ class Market1501(ImageDataset):
     """
     _junk_pids = [0, -1]
     dataset_dir = 'Market-1501-v15.09.15'
-    dataset_url = 'http://188.138.127.15:81/Datasets/Market-1501-v15.09.15.zip'
 
-    def __init__(self, root='', market1501_500k=False, **kwargs):
+    def __init__(self, root='', **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
         self.dataset_dir = osp.join(self.root, self.dataset_dir)
         print('---dataset_dir:', self.dataset_dir)
@@ -31,20 +30,15 @@ class Market1501(ImageDataset):
         self.query_dir = osp.join(self.dataset_dir, 'query')
         self.gallery_dir = osp.join(self.dataset_dir, 'bounding_box_test')
         self.extra_gallery_dir = osp.join(self.dataset_dir, 'images')
-        self.market1501_500k = market1501_500k
 
         required_files = [
             self.dataset_dir, self.train_dir, self.query_dir, self.gallery_dir
         ]
-        if self.market1501_500k:
-            required_files.append(self.extra_gallery_dir)
         self.check_before_run(required_files)
 
         train = self.process_dir(self.train_dir, relabel=True)
         query = self.process_dir(self.query_dir, relabel=False)
         gallery = self.process_dir(self.gallery_dir, relabel=False)
-        if self.market1501_500k:
-            gallery += self.process_dir(self.extra_gallery_dir, relabel=False)
 
         super(Market1501, self).__init__(train, query, gallery, **kwargs)
 

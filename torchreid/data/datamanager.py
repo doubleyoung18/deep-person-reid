@@ -111,12 +111,6 @@ class ImageDataManager(DataManager):
         num_instances (int, optional): number of instances per identity in a batch.
             Default is 4.
         train_sampler (str, optional): sampler. Default is RandomSampler.
-        cuhk03_labeled (bool, optional): use cuhk03 labeled images.
-            Default is False (defaul is to use detected images).
-        cuhk03_classic_split (bool, optional): use the classic split in cuhk03.
-            Default is False.
-        market1501_500k (bool, optional): add 500K distractors to the gallery
-            set in market1501. Default is False.
 
     Examples::
 
@@ -159,9 +153,7 @@ class ImageDataManager(DataManager):
         workers=4,
         num_instances=4,
         train_sampler='RandomSampler',
-        cuhk03_labeled=False,
-        cuhk03_classic_split=False,
-        market1501_500k=False
+        percent=1
     ):
 
         super(ImageDataManager, self).__init__(
@@ -174,6 +166,7 @@ class ImageDataManager(DataManager):
             norm_std=norm_std,
             use_gpu=use_gpu
         )
+        print('ImageDataManager: percent', percent)
 
         print('=> Loading train (source) dataset')
         trainset = []
@@ -185,9 +178,7 @@ class ImageDataManager(DataManager):
                 combineall=combineall,
                 root=root,
                 split_id=split_id,
-                cuhk03_labeled=cuhk03_labeled,
-                cuhk03_classic_split=cuhk03_classic_split,
-                market1501_500k=market1501_500k
+                percent=percent
             )
             trainset.append(trainset_)
         trainset = sum(trainset)
@@ -226,9 +217,7 @@ class ImageDataManager(DataManager):
                     combineall=False, # only use the training data
                     root=root,
                     split_id=split_id,
-                    cuhk03_labeled=cuhk03_labeled,
-                    cuhk03_classic_split=cuhk03_classic_split,
-                    market1501_500k=market1501_500k
+                    percent=percent
                 )
                 trainset_t.append(trainset_t_)
             trainset_t = sum(trainset_t)
@@ -270,12 +259,10 @@ class ImageDataManager(DataManager):
                 name,
                 transform=self.transform_te,
                 mode='query',
-                combineall=combineall,
+                combineall=False,
                 root=root,
                 split_id=split_id,
-                cuhk03_labeled=cuhk03_labeled,
-                cuhk03_classic_split=cuhk03_classic_split,
-                market1501_500k=market1501_500k
+                percent=percent
             )
             self.test_loader[name]['query'] = torch.utils.data.DataLoader(
                 queryset,
@@ -291,13 +278,11 @@ class ImageDataManager(DataManager):
                 name,
                 transform=self.transform_te,
                 mode='gallery',
-                combineall=combineall,
+                combineall=False,
                 verbose=False,
                 root=root,
                 split_id=split_id,
-                cuhk03_labeled=cuhk03_labeled,
-                cuhk03_classic_split=cuhk03_classic_split,
-                market1501_500k=market1501_500k
+                percent=percent
             )
             self.test_loader[name]['gallery'] = torch.utils.data.DataLoader(
                 galleryset,

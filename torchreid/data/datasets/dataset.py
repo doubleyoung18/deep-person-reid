@@ -36,6 +36,7 @@ class Dataset(object):
         mode='train',
         combineall=False,
         verbose=True,
+        percent=1,
         **kwargs
     ):
         self.train = train
@@ -45,12 +46,14 @@ class Dataset(object):
         self.mode = mode
         self.combineall = combineall
         self.verbose = verbose
+        self.percent = percent
+        print('Dataset:percent', self.percent)
 
         self.num_train_pids = self.get_num_pids(self.train)
         self.num_train_cams = self.get_num_cams(self.train)
 
         if self.combineall:
-            self.combine_all()
+            self.combine_all(self.percent)
 
         if self.mode == 'train':
             self.data = self.train
@@ -133,7 +136,7 @@ class Dataset(object):
         """Shows dataset statistics."""
         pass
 
-    def combine_all(self):
+    def combine_all(self, percent=1):
         """Combines train, query and gallery in a dataset for training."""
         combined = copy.deepcopy(self.train)
 
@@ -145,60 +148,24 @@ class Dataset(object):
             g_pids.add(pid)
         pid2label = {pid: i for i, pid in enumerate(g_pids)}
 
-        def _combine_data(data):
-            for img_path, pid, camid in data:
+        def _combine_data(data, percent):
+            total = int(len(data) * percent)
+            print('---total:', total)
+            for i, (img_path, pid, camid) in enumerate(data):
+                if i == total:
+                    break
                 if pid in self._junk_pids:
                     continue
                 pid = pid2label[pid] + self.num_train_pids
                 combined.append((img_path, pid, camid))
-
-        _combine_data(self.query)
-        _combine_data(self.gallery)
+        print('---before combine: num_train_pids=', self.num_train_pids)
+        _combine_data(self.query, percent)
+        _combine_data(self.gallery, percent)
 
         self.train = combined
         self.num_train_pids = self.get_num_pids(self.train)
+        print('---after combine: num_train_pids=', self.num_train_pids)
 
-    def download_dataset(self, dataset_dir, dataset_url):
-        """Downloads and extracts dataset.
-
-        Args:
-            dataset_dir (str): dataset directory.
-            dataset_url (str): url to download dataset.
-        """
-        if osp.exists(dataset_dir):
-            return
-
-        if dataset_url is None:
-            raise RuntimeError(
-                '{} dataset needs to be manually '
-                'prepared, please follow the '
-                'document to prepare this dataset'.format(
-                    self.__class__.__name__
-                )
-            )
-
-        print('Creating directory "{}"'.format(dataset_dir))
-        mkdir_if_missing(dataset_dir)
-        fpath = osp.join(dataset_dir, osp.basename(dataset_url))
-
-        print(
-            'Downloading {} dataset to "{}"'.format(
-                self.__class__.__name__, dataset_dir
-            )
-        )
-        download_url(dataset_url, fpath)
-
-        print('Extracting "{}"'.format(fpath))
-        try:
-            tar = tarfile.open(fpath)
-            tar.extractall(path=dataset_dir)
-            tar.close()
-        except:
-            zip_ref = zipfile.ZipFile(fpath, 'r')
-            zip_ref.extractall(dataset_dir)
-            zip_ref.close()
-
-        print('{} dataset is ready'.format(self.__class__.__name__))
 
     def check_before_run(self, required_files):
         """Checks if required files exist before going deeper.

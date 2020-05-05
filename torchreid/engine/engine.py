@@ -321,6 +321,7 @@ class Engine(object):
         return cmc[0]
 
     def _compute_loss(self, criterion, outputs, targets):
+        # print("---compute_loss:", outputs, targets)
         if isinstance(outputs, (tuple, list)):
             loss = DeepSupervision(criterion, outputs, targets)
         else:
